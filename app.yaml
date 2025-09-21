@@ -1,0 +1,11 @@
+runtime: nodejs20
+
+env_variables:
+  NODE_ENV: production
+  USE_PINECONE: "true"
+  GOOGLE_API_KEY: AIzaSyAZkIsZJwFsVQv4VXOhAURETdQbjt86Nes
+  PINECONE_API_KEY: pcsk_6QS513_C775efCG9oUeh19crtbUQ5A9PSc1UFWvT8chmmBApi7DdkvCsTfNTqvv6wZyXDt
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 10

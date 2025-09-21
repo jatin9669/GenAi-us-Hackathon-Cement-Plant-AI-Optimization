@@ -1,0 +1,27 @@
+{
+    "name": "cement-backend",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "start-with-streamlit": "concurrently \"node server.js\" \"streamlit run streamlit_app.py --server.port 8502\"",
+        "start-server": "node server.js",
+        "start-streamlit": "streamlit run streamlit_app.py --server.port 8502"
+    },
+    "dependencies": {
+        "@google-cloud/firestore": "^7.1.0",
+        "@google-cloud/storage": "^7.7.0",
+        "@google/generative-ai": "^0.21.0",
+        "@pinecone-database/pinecone": "^3.0.3",
+        "body-parser": "^1.20.3",
+        "concurrently": "^8.2.2",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.2",
+        "express": "^4.21.2",
+        "google-auth-library": "^9.0.0",
+        "multer": "^1.4.5-lts.1",
+        "node-fetch": "^3.3.2",
+        "pdf2pic": "^3.2.0"
+    }
+}

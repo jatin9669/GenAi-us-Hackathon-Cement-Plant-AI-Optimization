@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anomaly Detection Dashboard</title>
+  <style>
+    :root {
+      --bg-light: linear-gradient(to right, #eef2f3, #d9e4f5);
+      --bg-dark: #1e1e1e;
+      --text-light: #333;
+      --text-dark: #eee;
+      --accent: #4285F4;
+      --card-gradient: linear-gradient(135deg, #e0f0ff, #c9e6ff);
+      --card-gradient-dark: linear-gradient(135deg, #2b2b2b, #1e1e1e);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      transition: background 0.4s, color 0.4s;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    header p {
+      margin: 8px 0 0 0;
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .iframe-container {
+      width: 95%;
+      max-width: 1200px;
+      margin: 30px auto;
+      background: var(--card-gradient);
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+      height: calc(100vh - 180px);
+      transition: background 0.4s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.dark .iframe-container {
+      background: var(--card-gradient-dark);
+    }
+
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+
+    /* Button styles */
+    .btn {
+      position: fixed;
+      top: 20px;
+      padding: 8px 15px;
+      background: #fff;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background 0.3s, transform 0.2s;
+      z-index: 10;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Back button on the left of Dark Mode button */
+    .back-btn {
+      right: 150px;
+      background: #fff;
+      color: #333;
+      z-index: 11;
+    }
+
+    /* Dark mode toggle */
+    .toggle-btn {
+      right: 20px;
+      background: #fff;
+      color: #333;
+      z-index: 12;
+    }
+
+    body.dark .back-btn,
+    body.dark .toggle-btn {
+      background: #444;
+      color: #eee;
+    }
+
+    @media (max-width: 768px) {
+      .iframe-container {
+        height: calc(100vh - 150px);
+        margin: 20px;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+      header p {
+        font-size: 0.9rem;
+      }
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .back-btn {
+        right: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <button class="btn back-btn" onclick="location.href='index.html'">⬅ Back</button>
+
+  <!-- Dark Mode Toggle -->
+  <button class="btn toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+
+  <header>
+    <h1>📊 Cement Plant Anomaly Dashboard</h1>
+    <p>Monitor real-time anomalies in feed rate, temperature, and equipment vibrations to optimize production.</p>
+  </header>
+
+  <div class="iframe-container">
+    <iframe 
+      src="https://lookerstudio.google.com/embed/reporting/b8c08bfa-6a32-436c-9172-7b6c9e452ba8/page/udtYF" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      const btn = document.querySelector(".toggle-btn");
+      if (document.body.classList.contains("dark")) {
+        btn.textContent = "☀️ Light Mode";
+      } else {
+        btn.textContent = "🌙 Dark Mode";
+      }
+    }
+  </script>
+</body>
+</html>
