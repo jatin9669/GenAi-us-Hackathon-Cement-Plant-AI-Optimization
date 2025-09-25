@@ -56,6 +56,19 @@ The application will be available at `http://localhost:3000`
 - **Chatbot**: AI-powered assistance for cement plant operations
 - **Production Tracking**: Real-time production data visualization
 - **Strength Analysis**: Cement strength prediction and analysis
+- **Assistant powered by MCP**: AI assistant built using MCP Toolbox and Agent ADK, connected to BigQuery to answer queries related to the cement plabt data instead of having to manually search
+
+## Features of MCP Assistant (yet to be enhanced):
+- Average raw material consumption and composition over a couple of days
+- Feed rate/temperature sensor readings
+- LSF (Lime Saturation Factor) values
+- Clinker production and power consumption logs
+- Upcoming feature: Forecasting clinker production and power consumption for the next couple of days
+
+Here are some of the questions you can experiment with for now:
+- How was the temperature range in Raw Mill 1 on 17 September 2025?
+- Show LSF values from 17th September 2025
+- How has the clinker production been from 17 September 2025 - 20 September 2025?
 
 ## File Structure
 
