@@ -5,8 +5,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const router = express.Router();
 
 // Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Configure multer for file uploads
 const upload = multer({

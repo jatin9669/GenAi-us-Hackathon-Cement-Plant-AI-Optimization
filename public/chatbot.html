@@ -3,159 +3,178 @@
 <head>
   <meta charset="UTF-8" />
   <title>AI Chatbot - Cement Plant Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     :root {
-      --bg-light: linear-gradient(to right, #eef2f3, #d9e4f5);
-      --bg-dark: #1e1e1e;
-      --text-light: #333;
-      --text-dark: #eee;
-      --card-light: #fff;
-      --card-dark: #2b2b2b;
-      --accent: #4285F4;
+      --accent: #00aaff;
+      --accent-hover: #0090dd;
+      --bg-gradient-light: radial-gradient(circle at 20% 20%, #f0f6ff, #d9e4f5, #f9fbff);
+      --bg-gradient-dark: radial-gradient(circle at 30% 30%, #0f2027, #203a43, #2c5364);
+      --card-light: rgba(255, 255, 255, 0.8);
+      --card-dark: rgba(35, 35, 35, 0.85);
+      --text-light: #1c1c1c;
+      --text-dark: #f5f5f5;
+      --blur: 20px;
     }
 
+    * { box-sizing: border-box; transition: all 0.4s ease; }
+
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: var(--bg-light);
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      background: var(--bg-gradient-light);
       color: var(--text-light);
-      transition: background 0.4s, color 0.4s;
-      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     body.dark {
-      background: var(--bg-dark);
+      background: var(--bg-gradient-dark);
       color: var(--text-dark);
+    }
+
+    /* Header and Controls */
+    .toggle-container, .back-btn {
+      position: absolute;
+      top: 25px;
+      z-index: 100;
+    }
+
+    .toggle-container { right: 25px; }
+    .back-btn { left: 25px; }
+
+    .toggle-btn, .back-btn {
+      background: rgba(255, 255, 255, 0.85);
+      border: none;
+      border-radius: 25px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    body.dark .toggle-btn, body.dark .back-btn {
+      background: rgba(40, 40, 40, 0.8);
+      color: #eee;
+      box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    }
+
+    .toggle-btn:hover, .back-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
     }
 
     header {
       text-align: center;
-      padding: 30px 20px;
-      background: var(--accent);
+      padding: 100px 20px 50px;
+      background: linear-gradient(135deg, #0078ff 0%, #00c6ff 100%);
       color: white;
       position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.25);
+      filter: blur(150px);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(25px); }
     }
 
     header h1 {
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.25);
     }
 
     header p {
-      margin-top: 10px;
-      font-size: 1rem;
-      opacity: 0.9;
+      font-size: 1.1rem;
+      opacity: 0.95;
     }
 
-    .back-btn {
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: background 0.3s;
-    }
-
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .toggle-container {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    }
-
-    .toggle-btn {
-      background: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 15px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-      transition: background 0.3s;
-    }
-
-    body.dark .toggle-btn {
-      background: #444;
-      color: #eee;
-    }
-
+    /* Layout */
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 30px 20px;
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 30px;
+      padding: 60px 20px;
+      max-width: 1300px;
+      margin: auto;
     }
 
-    .sidebar {
-      width: 300px;
+    .sidebar, .chat-container {
       background: var(--card-light);
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      height: fit-content;
+      backdrop-filter: blur(var(--blur));
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
       transition: background 0.4s;
     }
 
-    body.dark .sidebar {
+    body.dark .sidebar, body.dark .chat-container {
       background: var(--card-dark);
+      box-shadow: 0 12px 40px rgba(255,255,255,0.05);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 320px;
+      padding: 25px;
+      flex-shrink: 0;
     }
 
     .sidebar h3 {
       color: var(--accent);
       margin-top: 0;
+      text-align: center;
     }
 
     .upload-area {
       border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 20px;
+      border-radius: 15px;
+      padding: 25px;
       text-align: center;
       margin: 15px 0;
       cursor: pointer;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, background 0.3s;
     }
 
     .upload-area:hover {
       border-color: var(--accent);
+      background: rgba(0,170,255,0.05);
     }
 
     .upload-area.dragover {
       border-color: var(--accent);
-      background: rgba(66, 133, 244, 0.1);
-    }
-
-    .file-input {
-      display: none;
+      background: rgba(66,133,244,0.15);
     }
 
     .browse-btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 10px 18px;
+      border-radius: 25px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 12px;
+      font-weight: 600;
     }
 
     .browse-btn:hover {
-      background: #3367d6;
+      background: var(--accent-hover);
     }
 
     .uploaded-files {
@@ -166,20 +185,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px;
-      background: rgba(66, 133, 244, 0.1);
-      border-radius: 5px;
+      background: rgba(66,133,244,0.08);
+      border-radius: 8px;
+      padding: 8px 10px;
       margin: 5px 0;
+      font-size: 0.9rem;
     }
 
     .file-item .remove-btn {
       background: #f44336;
       color: white;
       border: none;
-      border-radius: 3px;
-      padding: 4px 8px;
+      border-radius: 5px;
+      padding: 5px 8px;
       cursor: pointer;
-      font-size: 12px;
     }
 
     .process-btn {
@@ -188,41 +207,31 @@
       color: white;
       border: none;
       padding: 12px;
-      border-radius: 5px;
+      border-radius: 25px;
       cursor: pointer;
       margin-top: 15px;
       font-weight: 600;
+      transition: background 0.3s, transform 0.2s;
     }
 
-    .process-btn:hover {
-      background: #45a049;
-    }
+    .process-btn:hover { background: #43a047; transform: translateY(-2px); }
+    .process-btn:disabled { background: #bbb; cursor: not-allowed; }
 
-    .process-btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
+    /* Chat Box */
     .chat-container {
       flex: 1;
-      background: var(--card-light);
-      border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      height: 70vh;
+      min-width: 350px;
+      height: 75vh;
       display: flex;
       flex-direction: column;
-      transition: background 0.4s;
-    }
-
-    body.dark .chat-container {
-      background: var(--card-dark);
+      overflow: hidden;
     }
 
     .chat-header {
       background: var(--accent);
       color: white;
       padding: 15px 20px;
+      font-weight: 600;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -234,14 +243,15 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
     }
 
     .message {
       max-width: 80%;
       padding: 12px 16px;
       border-radius: 18px;
-      word-wrap: break-word;
+      line-height: 1.6;
+      word-break: break-word;
     }
 
     .message.user {
@@ -252,482 +262,243 @@
 
     .message.assistant {
       align-self: flex-start;
-      background: #f1f3f4;
+      background: rgba(0,0,0,0.05);
       color: var(--text-light);
-      border: 1px solid #e0e0e0;
     }
 
     body.dark .message.assistant {
-      background: #3c3c3c;
+      background: rgba(255,255,255,0.08);
       color: var(--text-dark);
-      border-color: #555;
     }
 
     .chat-input-container {
-      padding: 20px;
-      border-top: 1px solid #e0e0e0;
       display: flex;
-      gap: 10px;
+      padding: 15px 20px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(10px);
     }
 
     body.dark .chat-input-container {
-      border-top-color: #555;
+      background: rgba(35,35,35,0.6);
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
 
     .chat-input {
       flex: 1;
-      padding: 12px 16px;
-      border: 1px solid #e0e0e0;
       border-radius: 25px;
+      border: 1px solid #ccc;
+      padding: 12px 16px;
       outline: none;
-      font-size: 14px;
-      background: var(--card-light);
-      color: var(--text-light);
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.85);
     }
 
     body.dark .chat-input {
-      background: var(--card-dark);
-      color: var(--text-dark);
-      border-color: #555;
-    }
-
-    .send-btn, .clear-btn {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.3s;
+      background: rgba(50,50,50,0.8);
+      color: #fff;
+      border-color: #666;
     }
 
     .send-btn {
       background: var(--accent);
       color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-weight: 600;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
     }
 
-    .send-btn:hover {
-      background: #3367d6;
-    }
-
-    .send-btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
+    .send-btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
 
     .clear-btn {
+      width: 100%;
       background: #f44336;
       color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-weight: 600;
     }
 
-    .clear-btn:hover {
-      background: #d32f2f;
-    }
+    .clear-btn:hover { background: #d32f2f; }
 
     .loading {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #666;
       font-style: italic;
+      color: #666;
     }
 
-    .loading::after {
-      content: '';
-      width: 12px;
-      height: 12px;
-      border: 2px solid #ccc;
-      border-top: 2px solid var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .assistant strong { color: #0078ff; }
+    .assistant code {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: monospace;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    footer {
+      text-align: center;
+      padding: 25px;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(0,0,0,0.05);
+      color: #444;
+    }
+
+    body.dark footer {
+      background: rgba(30,30,30,0.6);
+      color: #ddd;
+      border-color: rgba(255,255,255,0.05);
     }
 
     @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        padding: 20px 10px;
-        gap: 20px;
-      }
-      
-      .sidebar {
-        width: 100%;
-      }
-      
-      .chat-container {
-        height: 60vh;
-      }
-      
-      header h1 {
-        font-size: 1.5rem;
-      }
-      
-      .back-btn {
-        position: static;
-        transform: none;
-        margin-bottom: 10px;
-      }
+      .container { flex-direction: column; align-items: center; }
+      .chat-container { height: 65vh; }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
 
-  <!-- Dark Mode Toggle -->
+<body>
+  <div class="back-btn" onclick="location.href='index.html'">⬅ Back</div>
   <div class="toggle-container">
     <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
   </div>
 
   <header>
-    <a href="index.html" class="back-btn">
-      <i class="fas fa-arrow-left"></i> Back to Dashboard
-    </a>
-    <h1><i class="fas fa-comments"></i> AI Chatbot Assistant</h1>
-    <p>Intelligent Document Analysis & General Knowledge Assistant</p>
+    <h1><i class="fas fa-comments"></i> Cement Plant AI Chatbot</h1>
+    <p>Ask anything about cement production or upload PDFs for document-based assistance</p>
   </header>
 
   <div class="container">
-    <!-- Sidebar for Document Upload -->
+    <!-- Sidebar -->
     <div class="sidebar">
-      <h3>Document Upload</h3>
-      <div class="upload-area" onclick="document.getElementById('fileInput').click()" 
+      <h3>📄 Document Upload</h3>
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()"
            ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-        <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #ccc; margin-bottom: 10px;"></i>
+        <i class="fas fa-cloud-upload-alt" style="font-size:2rem;color:#ccc;"></i>
         <p>Drag and drop files here</p>
-        <p style="font-size: 0.8rem; color: #666;">Limit 200MB per file • PDF</p>
-        <button class="browse-btn">Browse files</button>
+        <p style="font-size:0.8rem;color:#666;">PDF only • Max 200MB each</p>
+        <button class="browse-btn">Browse Files</button>
       </div>
-      
-      <input type="file" id="fileInput" class="file-input" multiple accept=".pdf" onchange="handleFileSelect(event)">
-      
-      <div class="uploaded-files" id="uploadedFiles"></div>
-      
-      <button class="process-btn" id="processBtn" onclick="processDocuments()" disabled>
+      <input type="file" id="fileInput" multiple accept=".pdf" onchange="handleFileSelect(event)" style="display:none;">
+      <div id="uploadedFiles" class="uploaded-files"></div>
+      <button id="processBtn" class="process-btn" onclick="processDocuments()" disabled>
         Process Documents
       </button>
-      
-      <div style="margin-top: 20px;">
-        <button class="clear-btn" onclick="clearChat()" style="width: 100%;">
-          <i class="fas fa-trash"></i> Clear Chat History
-        </button>
-      </div>
+      <button class="clear-btn" onclick="clearChat()">🗑 Clear Chat</button>
     </div>
 
-    <!-- Chat Container -->
+    <!-- Chat -->
     <div class="chat-container">
       <div class="chat-header">
-        <h3><i class="fas fa-robot"></i> Team Documentation Assistant</h3>
-        <div id="documentStatus" style="font-size: 0.9rem; opacity: 0.8;">
-          💬 You can ask general questions now, or upload PDF documents for document-specific queries.
-        </div>
+        <span><i class="fas fa-robot"></i> Cement AI Assistant</span>
+        <div id="documentStatus" style="font-size:0.9rem;">Ready for questions!</div>
       </div>
-      
       <div class="chat-messages" id="chatMessages">
         <div class="message assistant">
-          <strong>AI Assistant:</strong> Hello! I'm your cement plant AI assistant. I can help you with questions about cement production, plant operations, and technical processes. How can I assist you today?
+          <strong>AI Assistant:</strong> Hello! I'm your cement plant AI assistant. Ask me anything about operations or upload documents for analysis.
         </div>
       </div>
-      
       <div class="chat-input-container">
-        <input 
-          type="text" 
-          class="chat-input" 
-          id="messageInput" 
-          placeholder="Ask a question about your documents..."
-          onkeypress="handleKeyPress(event)"
-        >
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-          <i class="fas fa-paper-plane"></i> Send
-        </button>
+        <input type="text" class="chat-input" id="messageInput" placeholder="Type your question..." onkeypress="handleKeyPress(event)">
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
       </div>
     </div>
   </div>
 
+  <footer>© 2025 Cement AI Prototype • Powered by Vertex AI</footer>
+
   <script>
-    let sessionId = null;
-    let isLoading = false;
-    let uploadedFiles = [];
-    let hasProcessedDocuments = false;
+    let sessionId=null,isLoading=false,uploadedFiles=[],hasProcessedDocuments=false;
+    async function initializeChat(){sessionId='session_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);}
 
-    // Initialize chat session
-    async function initializeChat() {
-      // Generate a simple session ID (works with all API versions)
-      sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      console.log('Initialized session:', sessionId);
+    function formatMessage(text){
+      return text
+        .replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")
+        .replace(/\*(.*?)\*/g,"<em>$1</em>")
+        .replace(/`(.*?)`/g,"<code>$1</code>")
+        .replace(/\n/g,"<br>");
     }
 
-    // File handling functions
-    function handleFileSelect(event) {
-      const files = Array.from(event.target.files);
-      files.forEach(file => {
-        if (file.type === 'application/pdf' && file.size <= 200 * 1024 * 1024) {
-          uploadedFiles.push(file);
-          addFileToList(file);
-        }
-      });
-      updateProcessButton();
-    }
+    function handleFileSelect(e){const f=Array.from(e.target.files);f.forEach(x=>{if(x.type==='application/pdf'&&x.size<=200*1024*1024){uploadedFiles.push(x);addFileToList(x);}});updateProcessButton();}
+    function handleDrop(e){e.preventDefault();e.stopPropagation();e.target.classList.remove('dragover');const f=Array.from(e.dataTransfer.files);f.forEach(x=>{if(x.type==='application/pdf'&&x.size<=200*1024*1024){uploadedFiles.push(x);addFileToList(x);}});updateProcessButton();}
+    function handleDragOver(e){e.preventDefault();e.stopPropagation();e.target.classList.add('dragover');}
+    function handleDragLeave(e){e.preventDefault();e.stopPropagation();e.target.classList.remove('dragover');}
+    function addFileToList(f){const c=document.getElementById('uploadedFiles');const d=document.createElement('div');d.className='file-item';d.innerHTML=`<span>${f.name}</span><button class="remove-btn" onclick="removeFile('${f.name}')">Remove</button>`;c.appendChild(d);}
+    function removeFile(n){uploadedFiles=uploadedFiles.filter(f=>f.name!==n);document.querySelectorAll('.file-item').forEach(i=>{if(i.textContent.includes(n))i.remove();});updateProcessButton();}
+    function updateProcessButton(){document.getElementById('processBtn').disabled=uploadedFiles.length===0;}
 
-    function handleDrop(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.classList.remove('dragover');
-      
-      const files = Array.from(event.dataTransfer.files);
-      files.forEach(file => {
-        if (file.type === 'application/pdf' && file.size <= 200 * 1024 * 1024) {
-          uploadedFiles.push(file);
-          addFileToList(file);
-        }
-      });
-      updateProcessButton();
-    }
-
-    function handleDragOver(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.classList.add('dragover');
-    }
-
-    function handleDragLeave(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.target.classList.remove('dragover');
-    }
-
-    function addFileToList(file) {
-      const filesContainer = document.getElementById('uploadedFiles');
-      const fileDiv = document.createElement('div');
-      fileDiv.className = 'file-item';
-      fileDiv.innerHTML = `
-        <span>${file.name}</span>
-        <button class="remove-btn" onclick="removeFile('${file.name}')">Remove</button>
-      `;
-      filesContainer.appendChild(fileDiv);
-    }
-
-    function removeFile(fileName) {
-      uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-      const filesContainer = document.getElementById('uploadedFiles');
-      const fileItems = filesContainer.querySelectorAll('.file-item');
-      fileItems.forEach(item => {
-        if (item.textContent.includes(fileName)) {
-          item.remove();
-        }
-      });
-      updateProcessButton();
-    }
-
-    function updateProcessButton() {
-      const processBtn = document.getElementById('processBtn');
-      processBtn.disabled = uploadedFiles.length === 0;
-    }
-
-    async function processDocuments() {
-      if (uploadedFiles.length === 0 || !sessionId) return;
-      
-      const processBtn = document.getElementById('processBtn');
-      processBtn.disabled = true;
-      processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-      
-      try {
-        // Create FormData for file upload
-        const formData = new FormData();
-        formData.append('sessionId', sessionId);
-        
-        // Add all uploaded files
-        uploadedFiles.forEach(file => {
-          formData.append('documents', file);
-        });
-        
-        // Upload files to server
-        const response = await fetch('/api/chatbot/upload', {
-          method: 'POST',
-          body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        // Success - update UI
-        hasProcessedDocuments = true;
-        processBtn.innerHTML = '<i class="fas fa-check"></i> Documents Processed';
-        
-        // Update status
-        const status = document.getElementById('documentStatus');
-        status.innerHTML = `📄 Processed ${data.documentCount} document(s) successfully!`;
-        
-        // Update placeholder
-        const input = document.getElementById('messageInput');
-        input.placeholder = 'Ask a question about your documents...';
-        
-        addMessage(data.message, 'assistant');
-        
-      } catch (error) {
-        console.error('Document processing error:', error);
-        processBtn.disabled = false;
-        processBtn.innerHTML = 'Process Documents';
-        addMessage('Failed to process documents. Please try again.', 'assistant');
+    async function processDocuments(){
+      if(uploadedFiles.length===0||!sessionId)return;
+      const b=document.getElementById('processBtn');
+      b.disabled=!0;b.innerHTML='<i class="fas fa-spinner fa-spin"></i> Processing...';
+      try{
+        const f=new FormData();
+        f.append('sessionId',sessionId);
+        uploadedFiles.forEach(x=>f.append('documents',x));
+        const r=await fetch('/api/chatbot/upload',{method:'POST',body:f});
+        const d=await r.json();
+        if(d.error)throw new Error(d.error);
+        hasProcessedDocuments=!0;
+        b.innerHTML='<i class="fas fa-check"></i> Processed';
+        document.getElementById('documentStatus').innerHTML=`✅ Processed ${d.documentCount||uploadedFiles.length} document(s)`;
+        addMessage(d.message||'Documents processed successfully!','assistant');
+      }catch(e){
+        console.error(e);
+        b.disabled=!1;b.innerHTML='Process Documents';
+        addMessage('Failed to process documents.','assistant');
       }
     }
 
-    // Send message
-    async function sendMessage() {
-      const input = document.getElementById('messageInput');
-      const message = input.value.trim();
-      
-      if (!message || isLoading) return;
-      
-      // Add user message to chat
-      addMessage(message, 'user');
-      input.value = '';
-      
-      // Show loading
-      isLoading = true;
-      const loadingDiv = addMessage('Thinking...', 'assistant', true);
+    async function sendMessage(){
+      const i=document.getElementById('messageInput');
+      const m=i.value.trim();
+      if(!m||isLoading)return;
+      addMessage(m,'user');
+      i.value='';
+      isLoading=!0;
       updateSendButton();
-      
-      try {
-        const response = await fetch('/api/chatbot/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId,
-            message
-          })
-        });
-        
-        const data = await response.json();
-        
-        // Remove loading message
-        loadingDiv.remove();
-        
-        if (data.error) {
-          addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
-        } else {
-          addMessage(data.response, 'assistant');
-        }
-      } catch (error) {
-        loadingDiv.remove();
-        addMessage('Sorry, I encountered a connection error. Please try again.', 'assistant');
-        console.error('Chat error:', error);
-      } finally {
-        isLoading = false;
-        updateSendButton();
+      const l=addMessage('Thinking...','assistant',!0);
+      try{
+        const r=await fetch('/api/chatbot/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId,message:m})});
+        const d=await r.json();
+        l.remove();
+        addMessage(d.response||'No response.','assistant');
+      }catch(e){
+        l.remove();
+        addMessage('Connection error.','assistant');
+      }finally{
+        isLoading=!1;updateSendButton();
       }
     }
 
-    // Format text with basic markdown-like formatting
-    function formatText(text) {
-      // Convert line breaks to HTML
-      text = text.replace(/\n/g, '<br>');
-      
-      // Format bold text (**text** or __text__)
-      text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
-      
-      // Format italic text (*text* or _text_)
-      text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      text = text.replace(/_(.*?)_/g, '<em>$1</em>');
-      
-      // Format numbered lists
-      text = text.replace(/^\d+\.\s+(.+)$/gm, '<div style="margin: 5px 0; padding-left: 20px;">• $1</div>');
-      
-      // Format bullet points
-      text = text.replace(/^[-•]\s+(.+)$/gm, '<div style="margin: 5px 0; padding-left: 20px;">• $1</div>');
-      
-      // Format headers (# Header)
-      text = text.replace(/^#{1,3}\s+(.+)$/gm, '<h4 style="color: #4285F4; margin: 15px 0 10px 0; font-size: 1.1em;">$1</h4>');
-      
-      // Format code blocks (```code```)
-      text = text.replace(/```([\s\S]*?)```/g, '<pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; overflow-x: auto; border-left: 3px solid #4285F4;"><code>$1</code></pre>');
-      
-      // Format inline code (`code`)
-      text = text.replace(/`([^`]+)`/g, '<code style="background: #f5f5f5; padding: 2px 4px; border-radius: 3px; font-family: monospace;">$1</code>');
-      
-      // Add spacing around paragraphs
-      text = text.replace(/\n\n/g, '</p><p style="margin: 10px 0;">');
-      text = '<p style="margin: 10px 0;">' + text + '</p>';
-      
-      return text;
+    function addMessage(t,s,l=!1){
+      const c=document.getElementById('chatMessages');
+      const d=document.createElement('div');
+      d.className=`message ${s}`;
+      const formatted = l ? t : formatMessage(t);
+      d.innerHTML=l?`<div class="loading">${t}</div>`:`<strong>${s==='user'?'You':'AI Assistant'}:</strong> <div style="margin-top:6px;">${formatted}</div>`;
+      c.appendChild(d);
+      c.scrollTop=c.scrollHeight;
+      return d;
     }
 
-    // Add message to chat
-    function addMessage(text, sender, isLoading = false) {
-      const messagesContainer = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${sender}`;
-      
-      if (isLoading) {
-        messageDiv.innerHTML = `<div class="loading">${text}</div>`;
-      } else {
-        const prefix = sender === 'user' ? '<strong>You:</strong> ' : '<strong>AI Assistant:</strong> ';
-        const formattedText = sender === 'assistant' ? formatText(text) : text;
-        messageDiv.innerHTML = prefix + '<div style="margin-top: 8px;">' + formattedText + '</div>';
-      }
-      
-      messagesContainer.appendChild(messageDiv);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      
-      return messageDiv;
+    function clearChat(){
+      document.getElementById('chatMessages').innerHTML='<div class="message assistant"><strong>AI Assistant:</strong> Hello! I\'m your cement plant AI assistant. Ask me anything about operations or upload documents for analysis.</div>';
+      document.getElementById('documentStatus').innerHTML='Ready for questions!';
     }
 
-    // Clear chat
-    function clearChat() {
-      // Clear messages locally
-      const messagesContainer = document.getElementById('chatMessages');
-      messagesContainer.innerHTML = `
-        <div class="message assistant">
-          <strong>AI Assistant:</strong> Hello! I'm your cement plant AI assistant. I can help you with questions about cement production, plant operations, and technical processes. How can I assist you today?
-        </div>
-      `;
-      
-      // Reset document status
-      hasProcessedDocuments = false;
-      const status = document.getElementById('documentStatus');
-      status.innerHTML = '💬 You can ask general questions now, or upload PDF documents for document-specific queries.';
-      
-      // Reset input placeholder
-      const input = document.getElementById('messageInput');
-      input.placeholder = 'Ask a question...';
-    }
-
-    // Handle key press
-    function handleKeyPress(event) {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-      }
-    }
-
-    // Update send button state
-    function updateSendButton() {
-      const sendBtn = document.getElementById('sendBtn');
-      sendBtn.disabled = isLoading;
-      sendBtn.innerHTML = isLoading ? 
-        '<i class="fas fa-spinner fa-spin"></i> Sending...' : 
-        '<i class="fas fa-paper-plane"></i> Send';
-    }
-
-    // Dark mode toggle
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark");
-      const btn = document.querySelector(".toggle-btn");
-      if (document.body.classList.contains("dark")) {
-        btn.textContent = "☀️ Light Mode";
-      } else {
-        btn.textContent = "🌙 Dark Mode";
-      }
-    }
-
-    // Initialize on page load
-    window.addEventListener('load', initializeChat);
+    function handleKeyPress(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+    function updateSendButton(){const b=document.getElementById('sendBtn');b.disabled=isLoading;b.textContent=isLoading?'...':'Send';}
+    function toggleDarkMode(){document.body.classList.toggle('dark');document.querySelector('.toggle-btn').textContent=document.body.classList.contains('dark')?'☀️ Light Mode':'🌙 Dark Mode';}
+    window.onload=initializeChat;
   </script>
 </body>
 </html>
+

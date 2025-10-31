@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cement Strength Predictor</title>
+  <title>Cement Demand Predictor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -203,21 +203,47 @@
   </div>
 
   <header>
-    <h1>Cement Strength Predictor</h1>
-    <p>Predict compressive strength based on material composition</p>
+    <h1>Cement Demand Predictor</h1>
+    <p>Forecast cement demand using economic and environmental parameters</p>
   </header>
 
   <div class="container">
-    <div class="form-group"><label>Cement (kg/m³)</label><input type="number" id="cement"></div>
-    <div class="form-group"><label>Blast Furnace Slag (kg/m³)</label><input type="number" id="slag"></div>
-    <div class="form-group"><label>Fly Ash (kg/m³)</label><input type="number" id="flyash"></div>
-    <div class="form-group"><label>Water (kg/m³)</label><input type="number" id="water"></div>
-    <div class="form-group"><label>Superplasticizer (kg/m³)</label><input type="number" id="superplasticizer"></div>
-    <div class="form-group"><label>Coarse Aggregate (kg/m³)</label><input type="number" id="coarseaggregate"></div>
-    <div class="form-group"><label>Fine Aggregate (kg/m³)</label><input type="number" id="fineaggregate"></div>
-    <div class="form-group"><label>Age (days)</label><input type="number" id="age"></div>
+    <div class="form-group">
+      <label>Date (YYYY-MM)</label>
+      <input type="text" id="date">
+    </div>
 
-    <button class="btn" onclick="predictStrength()">Predict Strength</button>
+    <div class="form-group">
+      <label>State</label>
+      <input type="text" id="region">
+    </div>
+
+    <div class="form-group">
+      <label>GDP Growth Rate (%)</label>
+      <input type="number" step="0.01" id="gdp_growth_rate">
+    </div>
+
+    <div class="form-group">
+      <label>Construction Index</label>
+      <input type="number" step="0.1" id="construction_index">
+    </div>
+
+    <div class="form-group">
+      <label>Rainfall (mm)</label>
+      <input type="number" step="0.1" id="rainfall_mm">
+    </div>
+
+    <div class="form-group">
+      <label>Cement Price (₹/ton)</label>
+      <input type="number" step="0.1" id="cement_price_per_ton">
+    </div>
+
+    <div class="form-group">
+      <label>Infrastructure Spending (million ₹)</label>
+      <input type="number" step="0.1" id="infrastructure_spending_million">
+    </div>
+
+    <button class="btn" onclick="predictDemand()">Predict Demand</button>
     <div class="result" id="result"></div>
   </div>
 
@@ -232,20 +258,19 @@
         document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
     }
 
-    async function predictStrength() {
+    async function predictDemand() {
       const data = {
-        cement: parseFloat(document.getElementById('cement').value),
-        slag: parseFloat(document.getElementById('slag').value),
-        flyash: parseFloat(document.getElementById('flyash').value),
-        water: parseFloat(document.getElementById('water').value),
-        superplasticizer: parseFloat(document.getElementById('superplasticizer').value),
-        coarseaggregate: parseFloat(document.getElementById('coarseaggregate').value),
-        fineaggregate: parseFloat(document.getElementById('fineaggregate').value),
-        age: parseFloat(document.getElementById('age').value)
+        date: document.getElementById('date').value,
+        region: document.getElementById('region').value,
+        gdp_growth_rate: parseFloat(document.getElementById('gdp_growth_rate').value),
+        construction_index: parseFloat(document.getElementById('construction_index').value),
+        rainfall_mm: parseFloat(document.getElementById('rainfall_mm').value),
+        cement_price_per_ton: parseFloat(document.getElementById('cement_price_per_ton').value),
+        infrastructure_spending_million: parseFloat(document.getElementById('infrastructure_spending_million').value)
       };
 
       try {
-        const res = await fetch('/predict', {
+        const res = await fetch('/predict-demand', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -253,7 +278,7 @@
 
         const result = await res.json();
         document.getElementById('result').textContent =
-          `Predicted Strength: ${result.prediction.toFixed(2)} MPa`;
+          `Predicted Demand: ${result.prediction.toFixed(2)} tons`;
       } catch (err) {
         console.error(err);
         document.getElementById('result').textContent = 'Prediction failed. Check console.';
@@ -262,4 +287,3 @@
   </script>
 </body>
 </html>
-

@@ -7,8 +7,8 @@ import PineconeClient from './pinecone-client.js';
 const router = express.Router();
 
 // Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Initialize Pinecone Client
 const pinecone = new PineconeClient(process.env.PINECONE_API_KEY);
