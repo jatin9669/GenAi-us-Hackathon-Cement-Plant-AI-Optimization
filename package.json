@@ -10,6 +10,7 @@
         "start-streamlit": "streamlit run streamlit_app.py --server.port 8502"
     },
     "dependencies": {
+        "@google-cloud/bigquery": "^7.9.4",
         "@google-cloud/firestore": "^7.1.0",
         "@google-cloud/storage": "^7.7.0",
         "@google/generative-ai": "^0.21.0",

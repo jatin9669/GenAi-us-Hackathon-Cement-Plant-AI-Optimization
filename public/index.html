@@ -18,10 +18,7 @@
       --blur: 20px;
     }
 
-    * {
-      box-sizing: border-box;
-      transition: all 0.4s ease;
-    }
+    * { box-sizing: border-box; transition: all 0.4s ease; }
 
     body {
       font-family: "Poppins", "Segoe UI", Arial, sans-serif;
@@ -40,11 +37,11 @@
     .toggle-container {
       position: absolute;
       top: 25px;
-      right: 25px;
+      right: 80px;
       z-index: 100;
     }
 
-    .toggle-btn {
+    .toggle-btn, .notif-btn {
       background: rgba(255, 255, 255, 0.85);
       border: none;
       border-radius: 25px;
@@ -54,20 +51,21 @@
       color: #333;
       backdrop-filter: blur(10px);
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      margin-left: 10px;
     }
 
-    body.dark .toggle-btn {
+    body.dark .toggle-btn, body.dark .notif-btn {
       background: rgba(40, 40, 40, 0.8);
       color: #eee;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
     }
 
-    .toggle-btn:hover {
+    .toggle-btn:hover, .notif-btn:hover {
       background: var(--accent);
       color: white;
     }
 
-    /* Header / Hero Section */
+    /* Header */
     header {
       text-align: center;
       padding: 100px 20px 70px;
@@ -90,26 +88,12 @@
       animation: float 8s ease-in-out infinite alternate;
     }
 
-    header h1 {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    }
+    header h1 { font-size: 3rem; margin-bottom: 15px; font-weight: 700; }
+    header p { font-size: 1.25rem; opacity: 0.95; }
 
-    header p {
-      font-size: 1.25rem;
-      opacity: 0.95;
-      letter-spacing: 0.4px;
-    }
+    @keyframes float { from { transform: translateY(0px); } to { transform: translateY(25px); } }
 
-    @keyframes float {
-      from { transform: translateY(0px); }
-      to { transform: translateY(25px); }
-    }
-
-    /* Container and Cards */
+    /* Cards */
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -127,7 +111,7 @@
       text-align: center;
       cursor: pointer;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-      transform: perspective(600px) rotateX(0deg);
+      animation: fadeUp 1s ease-in-out;
     }
 
     body.dark .card {
@@ -140,30 +124,9 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
-    .card-icon {
-      font-size: 46px;
-      color: var(--accent);
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
-    }
+    .card-icon { font-size: 46px; color: var(--accent); margin-bottom: 15px; }
 
-    .card:hover .card-icon {
-      color: var(--accent-hover);
-      text-shadow: 0 0 15px rgba(0, 170, 255, 0.6);
-    }
-
-    .card h2 {
-      margin-bottom: 10px;
-      font-size: 1.35rem;
-      font-weight: 600;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      opacity: 0.9;
-    }
-
+    /* Footer */
     footer {
       text-align: center;
       padding: 25px;
@@ -171,29 +134,46 @@
       backdrop-filter: blur(15px);
       font-size: 0.9rem;
       color: #444;
-      border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    body.dark footer {
-      background: rgba(30, 30, 30, 0.6);
-      color: #ddd;
-      border-color: rgba(255, 255, 255, 0.05);
+    /* Notification Modal */
+    .modal {
+      display: none;
+      position: absolute;
+      top: 70px;
+      right: 25px;
+      width: 350px;
+      max-height: 400px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      overflow-y: auto;
+      z-index: 200;
+      padding: 20px;
     }
 
-    /* Animations */
+    .modal.dark { background: #1e1e1e; color: #fff; }
+
+    .notif {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 10px 0;
+      cursor: pointer;
+    }
+
+    .notif.unread { color: red; font-weight: bold; }
+
+    .notif small { display: block; opacity: 0.7; margin-top: 5px; }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card {
-      animation: fadeUp 1s ease-in-out;
     }
   </style>
 </head>
 
 <body>
   <div class="toggle-container">
+    <button class="notif-btn" onclick="toggleModal()">🔔 Notifications</button>
     <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
   </div>
 
@@ -238,23 +218,50 @@
       <h2>Demand Prediction</h2>
       <p>Forecast cement demand with machine learning and align with market movement.</p>
     </div>
-
   </div>
 
-  <footer>
-    © 2025 Cement AI Prototype
-  </footer>
+  <footer>© 2025 Cement AI Prototype</footer>
+
+  <!-- Notification Modal -->
+  <div id="notifModal" class="modal"></div>
 
   <script>
     function toggleDarkMode() {
       document.body.classList.toggle("dark");
       const btn = document.querySelector(".toggle-btn");
-      btn.textContent = document.body.classList.contains("dark")
-        ? "☀️ Light Mode"
-        : "🌙 Dark Mode";
+      btn.textContent = document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+      document.getElementById("notifModal").classList.toggle("dark");
+    }
+
+    async function fetchNotifications() {
+      try {
+        const res = await fetch('/api/notifications');
+        const data = await res.json();
+        const container = document.getElementById('notifModal');
+        container.innerHTML = '<h3>Latest Alerts</h3>';
+        data.forEach(n => {
+          const div = document.createElement('div');
+          div.className = 'notif unread';
+          div.innerHTML = `
+            <strong>Machine: ${n.machine_id}</strong><br>
+            ${n.details}
+            <small>${new Date(n.anomaly_ts).toLocaleString()}</small>
+          `;
+          div.onclick = () => div.classList.remove('unread');
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error('Error fetching notifications', err);
+      }
+    }
+
+    function toggleModal() {
+      const modal = document.getElementById('notifModal');
+      const isVisible = modal.style.display === 'block';
+      modal.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) fetchNotifications();
     }
   </script>
 </body>
 </html>
-
 

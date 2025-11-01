@@ -5,6 +5,7 @@ import cors from 'cors';
 import { GoogleAuth } from 'google-auth-library';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
+import { BigQuery } from '@google-cloud/bigquery';
 
 // Load environment variables
 dotenv.config();
@@ -15,14 +16,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 let chatbotModule;
 if (usePinecone) {
-    chatbotModule = './chatbot-api-pinecone.js';
-    console.log('🧠 Using Pinecone chatbot API');
+  chatbotModule = './chatbot-api-pinecone.js';
+  console.log('🧠 Using Pinecone chatbot API');
 } else if (isProduction) {
-    chatbotModule = './chatbot-api-production.js';
-    console.log('🧠 Using Production chatbot API (Firestore)');
+  chatbotModule = './chatbot-api-production.js';
+  console.log('🧠 Using Production chatbot API (Firestore)');
 } else {
-    chatbotModule = './chatbot-api.js';
-    console.log('🧠 Using Development chatbot API (in-memory)');
+  chatbotModule = './chatbot-api.js';
+  console.log('🧠 Using Development chatbot API (in-memory)');
 }
 
 const { setupChatbotRoutes } = await import(chatbotModule);
@@ -58,11 +59,11 @@ async function callVertexAI(instances, { location, endpointId }) {
   const accessToken = await authClient.getAccessToken();
 
   const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${project}/locations/${location}/endpoints/${endpointId}:predict`;
-  
+
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${accessToken.token}`,
+      Authorization: `Bearer ${accessToken.token}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ instances })
@@ -80,7 +81,11 @@ async function callVertexAI(instances, { location, endpointId }) {
 // =============================
 app.post('/predict', async (req, res) => {
   try {
-    const { cement, slag, flyash, water, superplasticizer, coarseaggregate, fineaggregate, age } = req.body;
+    const {
+      cement, slag, flyash, water,
+      superplasticizer, coarseaggregate, fineaggregate, age
+    } = req.body;
+
     console.log('Strength Model Input:', req.body);
 
     const instances = [{
@@ -136,6 +141,32 @@ app.post('/predict-demand', async (req, res) => {
 // 💬 Chatbot (Gemini / Pinecone / Firestore)
 // =============================
 setupChatbotRoutes(app);
+
+// =============================
+// 🔔 Notifications from BigQuery
+// =============================
+const bigquery = new BigQuery({
+  projectId: project,
+  keyFilename: './service-account-key.json'
+});
+
+// Example: dataset "cement_data", table "anomaly_logs"
+app.get('/api/notifications', async (req, res) => {
+  try {
+    const query = `
+      SELECT machine_id, anomaly_ts, details
+      FROM \`${project}.cement_ds.notification_log\`
+      ORDER BY anomaly_ts DESC
+      LIMIT 1
+    `;
+
+    const [rows] = await bigquery.query({ query });
+    res.json(rows);
+  } catch (err) {
+    console.error('BigQuery fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch notifications' });
+  }
+});
 
 // =============================
 // 🌐 Static Frontend
