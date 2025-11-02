@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Package Quality Detector</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --accent: #00aaff;
+      --accent-hover: #0090dd;
+      --bg-gradient-light: radial-gradient(circle at 20% 20%, #f0f6ff, #d9e4f5, #f9fbff);
+      --bg-gradient-dark: radial-gradient(circle at 30% 30%, #0f2027, #203a43, #2c5364);
+      --card-light: rgba(255, 255, 255, 0.8);
+      --card-dark: rgba(35, 35, 35, 0.8);
+      --text-light: #1c1c1c;
+      --text-dark: #f5f5f5;
+      --blur: 20px;
+    }
+
+    * { box-sizing: border-box; transition: all 0.4s ease; }
+
+    body {
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      background: var(--bg-gradient-light);
+      color: var(--text-light);
+      overflow-x: hidden;
+    }
+
+    body.dark {
+      background: var(--bg-gradient-dark);
+      color: var(--text-dark);
+    }
+
+    /* Toggle & Back Buttons */
+    .toggle-container, .back-btn {
+      position: absolute;
+      top: 25px;
+      z-index: 100;
+    }
+
+    .toggle-container { right: 25px; }
+    .back-btn { left: 25px; }
+
+    .toggle-btn, .back-btn {
+      background: rgba(255, 255, 255, 0.85);
+      border: none;
+      border-radius: 25px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #333;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    body.dark .toggle-btn, body.dark .back-btn {
+      background: rgba(40, 40, 40, 0.8);
+      color: #eee;
+      box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    }
+
+    .toggle-btn:hover, .back-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 100px 20px 50px;
+      background: linear-gradient(135deg, #0078ff 0%, #00c6ff 100%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.25);
+      filter: blur(150px);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes float {
+      from { transform: translateY(0); }
+      to { transform: translateY(25px); }
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      margin-bottom: 10px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+
+    header p {
+      font-size: 1.15rem;
+      opacity: 0.95;
+    }
+
+    /* Form Container */
+    .container {
+      max-width: 900px; /* Wider for video */
+      margin: 60px auto;
+      padding: 35px;
+      background: var(--card-light);
+      backdrop-filter: blur(var(--blur));
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      text-align: center; /* Center content */
+    }
+
+    body.dark .container {
+      background: var(--card-dark);
+      box-shadow: 0 12px 40px rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Video and Canvas Styling */
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      background: #000;
+    }
+    
+    /* Canvas is now hidden, but REQUIRED for frame capture */
+    canvas {
+      display: none;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.8);
+      color: #222;
+    }
+    
+    body.dark .form-group input[type="file"] {
+      background: rgba(60, 60, 60, 0.8);
+      color: #eee;
+      border: 1px solid #666;
+    }
+
+    .btn {
+      display: inline-block;
+      width: auto;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 25px;
+      font-size: 1.1rem;
+      text-align: left;
+      white-space: pre-wrap; /* Preserves formatting for JSON */
+      background: rgba(0,0,0,0.05);
+      padding: 15px;
+      border-radius: 8px;
+    }
+    
+    body.dark .result {
+      background: rgba(0,0,0,0.25);
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(15px);
+      font-size: 0.9rem;
+      color: #444;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark footer {
+      background: rgba(30,30,30,0.6);
+      color: #ddd;
+      border-color: rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="back-btn" onclick="location.href='index.html'">⬅ Back</div>
+  <div class="toggle-container">
+    <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+  </div>
+
+  <header>
+    <h1>Package Quality Detector</h1>
+    <p>Analyze video frames to detect faults in final packaging</p>
+  </header>
+
+  <div class="container">
+    <div class="form-group">
+      <label for="video-upload">Upload Your Video File</label>
+      <input type="file" id="video-upload" accept="video/mp4,video/quicktime,video/x-matroska,video/webm">
+    </div>
+
+    <div class="video-container">
+      <video id="video-player" controls muted playsinline>
+        Your browser does not support the video tag.
+      </video>
+      <canvas id="canvas"></canvas>
+    </div>
+    
+    <button class="btn" id="scan-btn" onclick="scanCurrentVideoFrame()" disabled>
+      Scan Current Frame
+    </button>
+    
+    <div class="result" id="result-text" style="display:none;"></div>
+  </div>
+
+  <footer>
+    © 2025 Cement AI Prototype
+  </footer>
+
+  <script>
+    const videoElement = document.getElementById('video-player');
+    const canvas = document.getElementById('canvas'); // Still needed for frame capture
+    const scanBtn = document.getElementById('scan-btn');
+    const videoUpload = document.getElementById('video-upload');
+    const resultText = document.getElementById('result-text');
+
+    // Enable scan button once video is loaded
+    videoUpload.onchange = (evt) => {
+      const file = evt.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        videoElement.src = fileURL;
+        scanBtn.disabled = false;
+      }
+    };
+    
+    // Resize hidden canvas to match video when it's ready
+    videoElement.onloadedmetadata = () => {
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+    };
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      document.querySelector(".toggle-btn").textContent =
+        document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+    }
+
+    async function scanCurrentVideoFrame() {
+      // We still need the canvas to grab the frame
+      const context = canvas.getContext('2d');
+      
+      // 1. Set canvas size to match the video
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+
+      // 2. Draw the current video frame onto the hidden canvas
+      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+      // 3. Get the frame as a Base64-encoded JPEG
+      const dataUrl = canvas.toDataURL('image/jpeg');
+
+      // 4. Extract just the Base64 data
+      const base64Image = dataUrl.split(',')[1];
+      
+      scanBtn.disabled = true;
+      scanBtn.textContent = "Scanning...";
+      resultText.style.display = "block";
+      resultText.textContent = "Analyzing frame... please wait.";
+
+      // 5. Send this to your backend endpoint
+      try {
+        const response = await fetch('/detect-clinker', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            image: base64Image
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+
+        // 6. *** THIS IS THE UPDATED PART ***
+        // Parse the Image Classification response
+        const prediction = result.predictions[0]; 
+        
+        if (!prediction || !prediction.displayNames || !prediction.confidences) {
+          throw new Error("Invalid response format from model.");
+        }
+
+        const labels = prediction.displayNames;
+        const scores = prediction.confidences;
+
+        let highestScore = 0;
+        let highestIndex = 0;
+        let allResultsText = "📊 **All Scores:**\n";
+
+        // Loop 1: Find the highest score and build the full list
+        for (let i = 0; i < labels.length; i++) {
+          const scorePercent = (scores[i] * 100).toFixed(1);
+          allResultsText += `${labels[i]}: ${scorePercent}%\n`;
+
+          if (scores[i] > highestScore) {
+            highestScore = scores[i];
+            highestIndex = i;
+          }
+        }
+
+        const finalLabel = labels[highestIndex];
+        const finalScore = (highestScore * 100).toFixed(1);
+
+        // Get an emoji for the final prediction
+        let emoji = "❓";
+        if (finalLabel.includes('good_packaging')) emoji = "✅";
+        if (finalLabel.includes('torn')) emoji = "🔥";
+        if (finalLabel.includes('misprinted_label')) emoji = "👎";
+
+        // 7. Show the formatted text output
+        const finalPredictionText = `\n🎉 **Final Prediction:**\n${emoji} ${finalLabel} (${finalScore}%)`;
+        
+        resultText.textContent = allResultsText + finalPredictionText;
+
+      } catch (error) {
+        console.error('Error detecting quality:', error);
+        resultText.textContent = `Error: ${error.message}`;
+      } finally {
+        scanBtn.disabled = false;
+        scanBtn.textContent = "Scan Current Frame";
+      }
+    }
+
+  </script>
+</body>
+</html>
