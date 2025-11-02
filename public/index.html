@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Cement Plant AI Optimization</title>
@@ -18,7 +19,10 @@
       --blur: 20px;
     }
 
-    * { box-sizing: border-box; transition: all 0.4s ease; }
+    * {
+      box-sizing: border-box;
+      transition: all 0.4s ease;
+    }
 
     body {
       font-family: "Poppins", "Segoe UI", Arial, sans-serif;
@@ -41,7 +45,8 @@
       z-index: 100;
     }
 
-    .toggle-btn, .notif-btn {
+    .toggle-btn,
+    .notif-btn {
       background: rgba(255, 255, 255, 0.85);
       border: none;
       border-radius: 25px;
@@ -54,13 +59,15 @@
       margin-left: 10px;
     }
 
-    body.dark .toggle-btn, body.dark .notif-btn {
+    body.dark .toggle-btn,
+    body.dark .notif-btn {
       background: rgba(40, 40, 40, 0.8);
       color: #eee;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
     }
 
-    .toggle-btn:hover, .notif-btn:hover {
+    .toggle-btn:hover,
+    .notif-btn:hover {
       background: var(--accent);
       color: white;
     }
@@ -88,10 +95,26 @@
       animation: float 8s ease-in-out infinite alternate;
     }
 
-    header h1 { font-size: 3rem; margin-bottom: 15px; font-weight: 700; }
-    header p { font-size: 1.25rem; opacity: 0.95; }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
 
-    @keyframes float { from { transform: translateY(0px); } to { transform: translateY(25px); } }
+    header p {
+      font-size: 1.25rem;
+      opacity: 0.95;
+    }
+
+    @keyframes float {
+      from {
+        transform: translateY(0px);
+      }
+
+      to {
+        transform: translateY(25px);
+      }
+    }
 
     /* Cards */
     .container {
@@ -124,7 +147,11 @@
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
-    .card-icon { font-size: 46px; color: var(--accent); margin-bottom: 15px; }
+    .card-icon {
+      font-size: 46px;
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
 
     /* Footer */
     footer {
@@ -152,7 +179,10 @@
       padding: 20px;
     }
 
-    .modal.dark { background: #1e1e1e; color: #fff; }
+    .modal.dark {
+      background: #1e1e1e;
+      color: #fff;
+    }
 
     .notif {
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -160,13 +190,118 @@
       cursor: pointer;
     }
 
-    .notif.unread { color: red; font-weight: bold; }
+    .notif.unread {
+      color: red;
+      font-weight: bold;
+    }
 
-    .notif small { display: block; opacity: 0.7; margin-top: 5px; }
+    .notif small {
+      display: block;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ---------- Notifications: visual polish ---------- */
+    #notifModal h3 {
+      margin: 0 0 10px 0;
+      color: #0078ff;
+      text-align: left;
+      font-size: 1.05rem;
+      background: linear-gradient(90deg, rgba(0, 120, 255, 0.08), transparent);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .notif-list {
+      margin-top: 10px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .notif-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      cursor: pointer;
+    }
+
+    .notif-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    /* top row: title + time */
+    .notif-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notif-machine {
+      font-weight: 700;
+      color: #0a58ca;
+    }
+
+    .notif-time {
+      font-size: 0.8rem;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    /* details list */
+    .notif-details {
+      margin: 8px 0 0 0;
+      padding-left: 16px;
+      color: #111;
+      font-size: 0.95rem;
+    }
+
+    /* color coded status */
+    .notif-status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      margin-left: 6px;
+    }
+
+    .notif-status.anomaly {
+      background: rgba(255, 60, 60, 0.12);
+      color: #c62828;
+    }
+
+    .notif-status.ok {
+      background: rgba(0, 180, 80, 0.08);
+      color: #0b7a3f;
+    }
+
+    /* when in dark mode */
+    body.dark #notifModal {
+      background: #141414;
+      color: #eee;
+    }
+
+    body.dark .notif-card {
+      background: rgba(30, 30, 30, 0.85);
+      color: #eee;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
     }
   </style>
 </head>
@@ -239,14 +374,51 @@
         const data = await res.json();
         const container = document.getElementById('notifModal');
         container.innerHTML = '<h3>Latest Alerts</h3>';
-        data.forEach(n => {
+
+        if (!data.length) {
+          container.innerHTML += '<p style="opacity:0.7">No recent alerts found.</p>';
+          return;
+        }
+
+        // Show only the latest 5 alerts
+        data.slice(0, 5).forEach(n => {
+          let detailsText = '';
+          try {
+            const parsed = JSON.parse(n.details);
+            detailsText = `
+          <ul style="margin:6px 0 0 15px; padding:0;">
+            <li><b>Feed Rate:</b> ${parsed.feed_rate}</li>
+            <li><b>Temperature:</b> ${parsed.temperature}</li>
+            <li><b>Vibration:</b> ${parsed.vibration}</li>
+            <li><b>Anomaly:</b> ${parsed.is_anomaly ? '⚠️ Yes' : '✅ No'}</li>
+          </ul>
+        `;
+          } catch {
+            detailsText = n.details;
+          }
+
+          const timestamp = n.anomaly_ts?.value || n.anomaly_ts || null;
+          const formattedTime = timestamp ?
+            new Date(timestamp).toLocaleString() :
+            'N/A';
+
           const div = document.createElement('div');
           div.className = 'notif unread';
           div.innerHTML = `
-            <strong>Machine: ${n.machine_id}</strong><br>
-            ${n.details}
-            <small>${new Date(n.anomaly_ts).toLocaleString()}</small>
-          `;
+        <div style="
+          background: rgba(255,255,255,0.8);
+          border-radius: 10px;
+          margin-bottom: 12px;
+          padding: 10px 14px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        ">
+          <strong style="color:#0078ff">Machine ${n.machine_id}</strong>
+          ${detailsText}
+          <small style="display:block; opacity:0.7; margin-top:6px;">
+            🕒 ${formattedTime}
+          </small>
+        </div>
+      `;
           div.onclick = () => div.classList.remove('unread');
           container.appendChild(div);
         });
@@ -254,6 +426,8 @@
         console.error('Error fetching notifications', err);
       }
     }
+
+
 
     function toggleModal() {
       const modal = document.getElementById('notifModal');
@@ -263,5 +437,5 @@
     }
   </script>
 </body>
-</html>
 
+</html>

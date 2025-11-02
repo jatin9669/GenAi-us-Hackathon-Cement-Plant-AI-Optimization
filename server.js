@@ -157,7 +157,7 @@ app.get('/api/notifications', async (req, res) => {
       SELECT machine_id, anomaly_ts, details
       FROM \`${project}.cement_ds.notification_log\`
       ORDER BY anomaly_ts DESC
-      LIMIT 1
+      LIMIT 5
     `;
 
     const [rows] = await bigquery.query({ query });
