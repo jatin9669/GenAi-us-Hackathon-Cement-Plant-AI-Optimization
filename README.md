@@ -88,10 +88,30 @@ Query capabilities:
 - Production and power consumption trends from BigQuery
 - Future clinker output or fuel demand predictions
 
+### 🛠️ Available Tools
+
+| Tool Name | Description |
+|-----------|-------------|
+| `forecast_clinker_production` | Forecast future clinker production rates |
+| `forecast_power_consumption` | Predict plant's total power consumption |
+| `get_al2o3_stats` | Get min/max/avg Aluminium Oxide % from raw mix samples |
+| `get_free_lime_stats` | Get total/avg clinker free lime % by equipment |
+| `get_kiln_feed_stats` | Get min/max/avg kiln feed rate (tph) by equipment |
+| `get_kiln_temp_stats` | Get min/max/avg kiln burning zone temperature |
+| `get_lsf_stats` | Get min/max/avg Lime Saturation Factor from samples |
+| `get_plant_power_stats` | Get total/avg plant power consumption (MW) |
+| `get_production_stats` | Get total/avg clinker production (tph) by equipment |
+| `get_raw_mill_feed_stats` | Get min/max/avg raw mill feed rate (tph) |
+| `get_raw_mill_power_stats` | Get min/max/avg raw mill power draw (kW) |
+| `get_sio2_stats` | Get min/max/avg Silicon Dioxide % from raw mix samples |
+
 Example Queries:
 - "Show LSF values for 17 September 2025"
 - "How was the temperature in Raw Mill 1 last week?"
-- "Forecast clinker production for the next 3 days."
+- "Forecast clinker production for the next 3 days"
+- "Get Al2O3 stats between March 1-15"
+- "Show kiln feed rate stats for Kiln 2 this month"
+- "What was the average power consumption last week?"
 
 ## 📁 Project Structure
 
