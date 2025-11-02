@@ -66,7 +66,7 @@ const clinkerQuality = {
 
 const packagingQualityDetector = {
   location: 'europe-west4',
-  endpointId: ''
+  endpointId: '5846545328559357952'
 }
 
 // === Helper: Call Vertex AI ===
