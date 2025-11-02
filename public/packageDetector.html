@@ -316,7 +316,7 @@
 
       // 5. Send this to your backend endpoint
       try {
-        const response = await fetch('/detect-clinker', {
+        const response = await fetch('/detect-packaging', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -364,8 +364,8 @@
         // Get an emoji for the final prediction
         let emoji = "❓";
         if (finalLabel.includes('good_packaging')) emoji = "✅";
-        if (finalLabel.includes('torn')) emoji = "🔥";
-        if (finalLabel.includes('misprinted_label')) emoji = "👎";
+        if (finalLabel.includes('torn')) emoji = "💥";
+        if (finalLabel.includes('misprinted_label')) emoji = "❌";
 
         // 7. Show the formatted text output
         const finalPredictionText = `\n🎉 **Final Prediction:**\n${emoji} ${finalLabel} (${finalScore}%)`;
