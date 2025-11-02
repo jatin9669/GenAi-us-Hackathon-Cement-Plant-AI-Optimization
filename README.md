@@ -162,6 +162,7 @@ Required configurations:
 
 ## 🚀 Future Enhancements
 
+- Using streaming inputs for detection through Vision AI (clinker quality prediction and package quality detection). We don't have access to live streaming input data for     now. 
 - Integrate streaming data pipeline for continuous sensor ingestion using Pub/Sub
 - Add multi-language support for MCP and CementGPT assistants
 - Expand Packaging QC to detect barcode and logo anomalies
