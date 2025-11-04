@@ -49,14 +49,14 @@ const project = 'genai-exchange-472212';
 
 // Strength Model (Asia region)
 const strengthModel = {
-  location: 'asia-south1',
-  endpointId: '4339178658552872960'
+  location: 'northamerica-northeast1',
+  endpointId: '2790098716411822080'
 };
 
 // Demand Model (US region)
 const demandModel = {
-  location: 'us-south1',
-  endpointId: '5189365029614387200'
+  location: 'northamerica-northeast2',
+  endpointId: '3225540505383206912'
 };
 
 const clinkerQuality = {
